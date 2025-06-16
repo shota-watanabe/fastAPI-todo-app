@@ -14,7 +14,7 @@ def get_todos(db: Session, skip: int = 0, limit: int = 100):
 # 新しいTodoを作成する
 def create_todo(db: Session, todo: schemas.TodoCreate):
     # スキーマからモデルインスタンスを作成
-    db_todo = models.Todo(title=todo.title)
+    db_todo = models.Todo(content=todo.content)
     db.add(db_todo) # セッションに追加
     db.commit()      # データベースにコミット（保存）
     db.refresh(db_todo) # 作成されたTodoの情報（IDなど）を更新

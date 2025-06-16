@@ -3,6 +3,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
+import sys
 
 # CORS(Cross-Origin Resource Sharing)を許可するためのミドルウェア
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from . import crud, models, schemas
 from .database import engine, get_db
 
+sys.dont_write_bytecode = True
 # データベーステーブルを作成
 # (もしテーブルが既に存在していても、何もしない)
 models.Base.metadata.create_all(bind=engine)
