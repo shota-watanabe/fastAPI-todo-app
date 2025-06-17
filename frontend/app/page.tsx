@@ -1,56 +1,31 @@
-// frontend/app/page.tsx
-'use client'; // このファイルがクライアントコンポーネントであることを示す
+'use client';
 
 import { useState, useEffect, FormEvent } from 'react';
+import { api } from '@/api/client';
+import { components } from '@/api/types';
 
-// APIから受け取るTodoの型を定義
-interface Todo {
-  id: number;
-  content: string;
-}
-
-// APIサーバーのURL
-const API_URL = 'http://localhost:8000';
+type Todo = components['schemas']['Todo']
 
 export default function Home() {
-  // Todoのリストを保持するためのstate
   const [todos, setTodos] = useState<Todo[]>([]);
-  // 入力フォームの値を保持するためのstate
   const [newTodoContent, setNewTodoContent] = useState('');
 
-  // --- API通信関数 ---
-
-  // GET: Todoリストを取得する
   const fetchTodos = async () => {
     try {
-      const response = await fetch(`${API_URL}/todos/`);
-      if (!response.ok) {
-        throw new Error('データの取得に失敗しました');
-      }
-      const data: Todo[] = await response.json();
-      setTodos(data);
+      const response = await api.todos.list();
+      setTodos(response);
     } catch (error) {
       console.error(error);
       alert('Todoリストの読み込みに失敗しました。');
     }
   };
 
-  // POST: 新しいTodoを追加する
   const addTodo = async (e: FormEvent) => {
     e.preventDefault(); // フォームのデフォルト送信を防ぐ
     if (!newTodoContent.trim()) return; // 空の場合は追加しない
 
     try {
-      const response = await fetch(`${API_URL}/todos/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ content: newTodoContent }),
-      });
-      if (!response.ok) {
-        throw new Error('Todoの追加に失敗しました');
-      }
+      await api.todos.create(newTodoContent)
       // 追加が成功したら、リストを再読み込みして表示を更新
       fetchTodos();
       setNewTodoContent(''); // 入力フォームをクリア
@@ -63,12 +38,7 @@ export default function Home() {
   // DELETE: Todoを削除する
   const deleteTodo = async (id: number) => {
     try {
-      const response = await fetch(`${API_URL}/todos/${id}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) {
-        throw new Error('Todoの削除に失敗しました');
-      }
+      await api.todos.delete(id)
       // 削除が成功したら、リストを再読み込みして表示を更新
       fetchTodos();
     } catch (error) {
