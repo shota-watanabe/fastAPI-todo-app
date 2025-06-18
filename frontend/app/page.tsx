@@ -22,7 +22,7 @@ export default function Home() {
 
   const addTodo = async (e: FormEvent) => {
     e.preventDefault(); // フォームのデフォルト送信を防ぐ
-    if (!newTodoContent.trim()) return; // 空の場合は追加しない
+    // if (!newTodoContent.trim()) return; // 空の場合は追加しない
 
     try {
       await api.todos.create(newTodoContent)
