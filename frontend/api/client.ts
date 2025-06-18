@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { components, operations } from './types';
 
-// User型の定義を参照
 type Todo = components['schemas']['Todo'];
 
 const baseInfo = axios.create({
