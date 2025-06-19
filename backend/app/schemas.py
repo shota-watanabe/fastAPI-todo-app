@@ -2,7 +2,7 @@
 # Pydanticモデルを使って定義し、データのバリデーション（検証）を自動で行う。
 # https://qiita.com/Tadataka_Takahashi/items/8b28f49d67d7e1d65d11
 
-from pydantic import BaseModel, StringConstraints, validator
+from pydantic import BaseModel, StringConstraints, ConfigDict
 from typing import Annotated, List, Optional
 from fastapi import HTTPException
 
@@ -23,8 +23,7 @@ class Todo(TodoBase):
     id: int
 
     # PydanticモデルがORMモデル（SQLAlchemyモデル）と連携できるようにするための設定
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes = True)
 
 # 汎用的なエラーレスポンスのためのスキーマ
 class ErrorResponse(BaseModel):
