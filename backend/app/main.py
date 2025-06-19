@@ -67,43 +67,6 @@ def validation_exception_handler(_, e: RequestValidationError):
         content=jsonable_encoder({"detail": exc}),
     )
 
-# @app.exception_handler(RequestValidationError)
-# async def validation_exception_handler(request: Request, exc: RequestValidationError):
-#     """
-#     Pydanticのバリデーションエラーを補足し、
-#     独自のレスポンス形式に変換するハンドラ。
-#     """
-#     # エラーの詳細情報を取得
-#     # exc.errors() には、どのフィールドでどんなエラーが起きたかの詳細が入っている
-#     # ここではシンプルなメッセージに集約する例
-#     error_messages = []
-#     for error in exc.errors():
-#         field = ".".join(str(loc) for loc in error["loc"])
-#         message = error["msg"]
-#         error_messages.append(f"'{field}': {message}")
-
-#     return JSONResponse(
-#         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-#         content={
-#             "message": "入力データが無効です。",
-#             "details": error_messages,
-#         },
-#     )
-
-# async def generic_exception_handler(request: Request, exc: Exception):
-#     """
-#     予期せぬサーバーエラーを補足し、
-#     汎用的な500エラーレスポンスを返すハンドラ。
-#     """
-#     # 本番環境では、ここでエラーログを記録することが推奨される
-
-#     return JSONResponse(
-#         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-#         content={
-#             "message": "サーバー内部で予期せぬエラーが発生しました。",
-#         },
-#     )
-
 # --- CORS設定 ---
 # フロントエンド（Next.js）が動作するオリジンからのリクエストを許可する
 origins = [
@@ -133,7 +96,9 @@ def read_todos(db: Session = Depends(get_db)):
     return todos
 
 # [READ] 特定のIDのTodoを1件取得
-@app.get("/todos/{todo_id}", response_model=schemas.Todo)
+@app.get("/todos/{todo_id}", response_model=schemas.Todo, responses={
+    404: {"model": schemas.ErrorResponse, "description": "Todo not found"}
+})
 def read_todo(todo_id: int, db: Session = Depends(get_db)):
     db_todo = crud.get_todo(db, todo_id=todo_id)
     if db_todo is None:
@@ -141,7 +106,9 @@ def read_todo(todo_id: int, db: Session = Depends(get_db)):
     return db_todo
 
 # [UPDATE] 特定のIDのTodoを更新
-@app.put("/todos/{todo_id}", response_model=schemas.Todo)
+@app.put("/todos/{todo_id}", response_model=schemas.Todo, responses={
+    404: {"model": schemas.ErrorResponse, "description": "Todo not found"}
+})
 def update_todo(todo_id: int, todo: schemas.TodoUpdate, db: Session = Depends(get_db)):
     db_todo = crud.update_todo(db, todo_id=todo_id, todo_data=todo)
     if db_todo is None:
@@ -150,8 +117,7 @@ def update_todo(todo_id: int, todo: schemas.TodoUpdate, db: Session = Depends(ge
 
 # [DELETE] 特定のIDのTodoを削除
 @app.delete("/todos/{todo_id}", response_model=schemas.Todo, responses={
-    404: {"model": schemas.ErrorResponse, "description": "Todo not found"},
-    500: {"model": schemas.ErrorResponse, "description": "Internal Server Error"},
+    404: {"model": schemas.ErrorResponse, "description": "Todo not found"}
 })
 def delete_todo(todo_id: int, db: Session = Depends(get_db)):
     db_todo = crud.delete_todo(db, todo_id=todo_id)

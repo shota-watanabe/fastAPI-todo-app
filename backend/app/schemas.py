@@ -28,8 +28,4 @@ class Todo(TodoBase):
 
 # 汎用的なエラーレスポンスのためのスキーマ
 class ErrorResponse(BaseModel):
-    message: str
-    details: Optional[List[str]] = None
-
-class NotFoundResponse(BaseModel):
     detail: str
