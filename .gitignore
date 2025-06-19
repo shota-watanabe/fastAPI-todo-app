@@ -2,6 +2,8 @@
 backend/app/__pycache__
 backend/venv
 backend/sql_app.db
+backend/tests/__pycache__
+
 # frontend
 frontend/.next
 frontend/node_modules

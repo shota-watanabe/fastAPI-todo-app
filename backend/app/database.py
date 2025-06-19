@@ -3,8 +3,7 @@
 import os
 # ORMの1つ(No SQL) https://qiita.com/arkuchy/items/75799665acd09520bed2
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, declarative_base
 
 # データベースファイルのパスを指定
 # backendディレクトリ直下に 'sql_app.db' というファイル名でデータベースが作成される
