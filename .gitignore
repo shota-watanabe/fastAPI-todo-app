@@ -1,4 +1,7 @@
+# backend
 backend/app/__pycache__
+backend/venv
+backend/sql_app.db
+# frontend
 frontend/.next
 frontend/node_modules
-backend/sql_app.db
